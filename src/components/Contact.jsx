@@ -6,32 +6,90 @@ export default function Contact() {
   const [status, setStatus] = useState('idle'); // idle, sending, success
   const [logs, setLogs] = useState([]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
 
     setStatus('sending');
     setLogs([]);
 
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+    let responseOk = false;
+    let apiErrorMsg = "Unknown transmission error";
+
+    // Async Web3Forms API dispatch in background
+    const apiCallPromise = (async () => {
+      try {
+        if (!accessKey || accessKey === 'YOUR_KEY_HERE') {
+          throw new Error("ACCESS_KEY_MISSING");
+        }
+        
+        const response = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify({
+            access_key: accessKey,
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject || "Portfolio Technical Enquiry",
+            message: formData.message,
+            from_name: "Earl Portfolio Contact Node"
+          })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          responseOk = true;
+        } else {
+          apiErrorMsg = data.message || "Invalid access credentials returned.";
+        }
+      } catch (err) {
+        if (err.message === "ACCESS_KEY_MISSING") {
+          apiErrorMsg = "Local environment key VITE_WEB3FORMS_ACCESS_KEY is not configured in .env file.";
+        } else {
+          apiErrorMsg = "Socket timeout or connection dropped. Check local network interfaces.";
+        }
+      }
+    })();
+
+    // CRT text logging animation sequence
     const logSequence = [
       { text: "ESTABLISHING OUTBOUND SMTP PORT 587...", delay: 400 },
-      { text: "COMPILING IN-MEMORY PACKET PAYLOAD...", delay: 1000 },
-      { text: "ENCRYPTING DATA ROUTE VIA TLS 1.3...", delay: 1600 },
-      { text: "SENDING TCP DATASTREAM TO ambidaearl@gmail.com...", delay: 2200 },
-      { text: "TRANSMISSION DISPATCH SUCCESSFUL [Code 250 OK]", delay: 2800 }
+      { text: "COMPILING IN-MEMORY PACKET PAYLOAD...", delay: 900 },
+      { text: "ENCRYPTING DATA ROUTE VIA TLS 1.3...", delay: 1400 },
+      { text: "DISPATCHING PACKETS TO WEB3FORMS API GATEWAY...", delay: 1900 }
     ];
 
     logSequence.forEach((step) => {
       setTimeout(() => {
         setLogs(prev => [...prev, step.text]);
-        if (step.text.includes("SUCCESSFUL")) {
-          setTimeout(() => {
-            setStatus('success');
-            setFormData({ name: '', email: '', subject: '', message: '' });
-          }, 600);
-        }
       }, step.delay);
     });
+
+    // Synchronize animations with background API response
+    setTimeout(async () => {
+      await apiCallPromise;
+      
+      if (responseOk) {
+        setLogs(prev => [...prev, "TRANSMISSION DISPATCH SUCCESSFUL [Code 250 OK]"]);
+        setTimeout(() => {
+          setStatus('success');
+          setFormData({ name: '', email: '', subject: '', message: '' });
+        }, 800);
+      } else {
+        setLogs(prev => [
+          ...prev, 
+          `[-] TRANSACTION FAILED: GATEWAY DISPATCH EXCEPTION`,
+          `[-] DIAGNOSTIC LOG: ${apiErrorMsg}`
+        ]);
+        setTimeout(() => {
+          setStatus('error');
+        }, 2200);
+      }
+    }, 2500);
   };
 
   const handleReset = () => {
@@ -205,6 +263,26 @@ export default function Contact() {
                     className="px-6 py-2.5 rounded-lg border border-[#1E293B] text-[#94A3B8] hover:text-[#06B6D4] hover:border-[#06B6D4]/50 transition-all duration-200 text-xs cursor-pointer"
                   >
                     SEND_ANOTHER_PACKET
+                  </button>
+                </div>
+              )}
+
+              {status === 'error' && (
+                <div className="flex flex-col items-center justify-center min-h-[350px] text-center font-mono space-y-6">
+                  <div className="p-4 bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] rounded-full animate-pulse">
+                    <ServerCrash className="w-10 h-10" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-[#F8FAFC] tracking-wider mb-2">TRANSMISSION FAILURE [503]</h3>
+                    <p className="text-sm text-[#94A3B8] max-w-sm mx-auto leading-relaxed">
+                      API Gateway rejected the transaction payload. Ensure you configured your Web3Forms access key inside your local <code>.env</code> file.
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleReset}
+                    className="px-6 py-2.5 rounded-lg border border-[#1E293B] text-[#94A3B8] hover:text-[#06B6D4] hover:border-[#06B6D4]/50 transition-all duration-200 text-xs cursor-pointer"
+                  >
+                    REVERT_TO_TERMINAL_INPUT
                   </button>
                 </div>
               )}
