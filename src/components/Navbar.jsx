@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Terminal, FolderGit2, Briefcase, Mail, Cpu } from 'lucide-react';
+import { Menu, X, Terminal, FolderGit2, Briefcase, Mail, Cpu, FileDown } from 'lucide-react';
 
 const GithubIcon = ({ className }) => (
   <svg
@@ -52,7 +52,8 @@ export default function Navbar() {
     { name: 'Console', href: '#terminal', icon: <Terminal className="w-4 h-4" /> },
     { name: 'Projects', href: '#projects', icon: <FolderGit2 className="w-4 h-4" /> },
     { name: 'Experience', href: '#experience', icon: <Briefcase className="w-4 h-4" /> },
-    { name: 'Contact', href: '#contact', icon: <Mail className="w-4 h-4" /> }
+    { name: 'Contact', href: '#contact', icon: <Mail className="w-4 h-4" /> },
+    { name: 'Resume', href: '/Earl_Lawrence_Ambida_Resume.pdf', icon: <FileDown className="w-4 h-4" /> }
   ];
 
   return (
@@ -78,6 +79,7 @@ export default function Navbar() {
               <a
                 key={link.name}
                 href={link.href}
+                {...(!link.href.startsWith('#') ? { target: "_blank", rel: "noopener noreferrer", download: true } : {})}
                 className="flex items-center gap-1.5 font-mono text-sm font-medium text-[#94A3B8] hover:text-[#06B6D4] transition-colors duration-200 cursor-pointer"
               >
                 {link.icon}
@@ -122,13 +124,14 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`md:hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+      <div className={`md:hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
         <div className="px-2 pt-2 pb-4 space-y-1 bg-[#0A0D16] border-b border-[#1E293B]/70 shadow-xl">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
               onClick={() => setIsOpen(false)}
+              {...(!link.href.startsWith('#') ? { target: "_blank", rel: "noopener noreferrer", download: true } : {})}
               className="flex items-center gap-3 px-3 py-2.5 rounded-md font-mono text-base font-medium text-[#94A3B8] hover:text-[#06B6D4] hover:bg-[#0F172A] transition-colors duration-200 cursor-pointer"
             >
               {link.icon}

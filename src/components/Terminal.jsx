@@ -83,6 +83,7 @@ export default function Terminal() {
   projects    - Lists key engineering projects built (IoT, AI, Robotics).
   skills      - Shows core technical competencies (languages, networks, hardware).
   sysinfo     - Outputs mock hardware diagnostics and HatchWatch telemetry.
+  resume      - Opens/Downloads my PDF resume.
   contact     - Shows email, phone, location, and social hubs.
   clear       - Clears all printed shell contents.`
         });
@@ -184,6 +185,14 @@ Phone      : +63 961 729 7999
 Email      : ambidaearl@gmail.com
 GitHub     : https://github.com/Dapacifism
 LinkedIn   : https://www.linkedin.com/in/earl-lawrence-ambida-b823043a7/`
+        });
+        break;
+
+      case 'resume':
+        window.open('/Earl_Lawrence_Ambida_Resume.pdf', '_blank');
+        newHistory.push({
+          type: 'success',
+          content: 'Opening resume in a new tab for download... [ DONE ]'
         });
         break;
 

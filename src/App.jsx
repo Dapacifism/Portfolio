@@ -4,7 +4,7 @@ import Terminal from './components/Terminal';
 import Projects from './components/Projects';
 import Experience from './components/Experience';
 import Contact from './components/Contact';
-import { Cpu, Terminal as TermIcon, Network, ArrowDown, ShieldAlert, Layers } from 'lucide-react';
+import { Cpu, Terminal as TermIcon, Network, ArrowDown, ShieldAlert, Layers, FileDown } from 'lucide-react';
 
 export default function App() {
   return (
@@ -54,6 +54,15 @@ export default function App() {
                   className="px-6 py-3 rounded-lg border border-[#1E293B] hover:border-[#06B6D4]/50 hover:bg-[#06B6D4]/5 text-[#94A3B8] hover:text-[#06B6D4] font-semibold tracking-wider transition-all duration-200 flex items-center gap-2 cursor-pointer"
                 >
                   <Layers className="w-4 h-4" /> VIEW_PROJECTS
+                </a>
+                <a
+                  href="/Earl_Lawrence_Ambida_Resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download
+                  className="px-6 py-3 rounded-lg border border-[#1E293B] hover:border-[#10B981]/50 hover:bg-[#10B981]/5 text-[#94A3B8] hover:text-[#10B981] font-semibold tracking-wider transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                >
+                  <FileDown className="w-4 h-4" /> DOWNLOAD_RESUME
                 </a>
               </div>
             </div>
